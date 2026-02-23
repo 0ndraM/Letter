@@ -1,0 +1,56 @@
+services:
+  # PHP Server (Apache)
+  web:
+    image: php:8.2-apache
+    container_name: projekt_web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./www:/var/www/html
+    networks:
+      - projekt_network
+    depends_on:
+      - db
+    # Instalace rozšíření pro MySQL (Endora ho má aktivní)
+    command: >
+      sh -c "docker-php-ext-install mysqli pdo pdo_mysql && apache2-foreground"
+
+  # MySQL Databáze
+  db:
+    image: mysql:8.0
+    container_name: projekt_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: wwww
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user_password
+    volumes:
+      - ./db_data:/var/lib/mysql
+    networks:
+      - projekt_network
+
+  # phpMyAdmin (Správa databáze přes prohlížeč)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: projekt_phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+    networks:
+      - projekt_network
+
+  # Composer (Správa závislostí)
+  composer:
+    image: composer:latest
+    container_name: projekt_composer
+    volumes:
+      - ./www:/app
+    networks:
+      - projekt_network
+
+networks:
+  projekt_network:
+    driver: bridge

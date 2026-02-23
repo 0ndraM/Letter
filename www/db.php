@@ -2,8 +2,8 @@
 session_start();
     $host = 'db';
     $db   = 'www';
-    $user = 'root';
-    $pass = 'silne_heslo_root';
+    $user = 'user';
+    $pass = 'user_password';
     $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
