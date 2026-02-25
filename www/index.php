@@ -151,8 +151,8 @@ $isLoggedIn = isset($_SESSION['user_id']);
     </div>
 
 <?php else: ?>
-            <h1>Zanechte stopu.</h1>
-            <p>Vytvořte dopis, který nepodléhá času.</p>
+            <h1>Pošlete dopis.</h1>
+            <p>Aplikace pro posílání dlouhých zpráv.</p>
             
             <div class="instruction">
                 1. <b style="color: #111;">IDENTITA:</b> Vytvořte si anonymní profil.<br>

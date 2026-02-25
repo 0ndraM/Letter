@@ -1,9 +1,9 @@
 <?php
 session_start();
     $host = 'db';
-    $db   = 'www';
-    $user = 'user';
-    $pass = 'user_password';
+    $db   = 'wwww'; 
+    $user = 'root';
+    $pass = 'root_password';
     $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";

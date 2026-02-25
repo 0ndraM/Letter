@@ -99,7 +99,7 @@ $username = $_SESSION['username'] ?? 'Poutník';
             <input type="hidden" name="letter_content" id="letter_content">
             
             <div id="editor">
-                <p>Zde začíná váš příběh...</p>
+                
             </div>
 
             <div class="actions">
@@ -118,14 +118,8 @@ $username = $_SESSION['username'] ?? 'Poutník';
         // Inicializace editoru
         var quill = new Quill('#editor', {
             theme: 'snow',
-            modules: {
-                toolbar: [
-                    ['bold', 'italic', 'underline'],
-                    [{ 'align': [] }],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                    ['clean']
-                ]
-            }
+            placeholder: 'Napište svůj dopis zde...',
+          
         });
 
         // Před odesláním formuláře přepíšeme obsah z Quillu do skrytého inputu
