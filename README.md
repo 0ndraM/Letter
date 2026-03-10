@@ -1,4 +1,4 @@
-# ✉️ Chronos – Zanechte stopu
+# ✉️ LETTER – Zanechte stopu
 
 Webová aplikace pro psaní a sdílení dopisů. Zaregistrujte se, napište dopis s formátovaným textem a sdílejte ho přes unikátní odkaz s kýmkoliv.
 

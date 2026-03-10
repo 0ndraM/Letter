@@ -27,7 +27,7 @@ $isOwner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $letter['user
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dopis od <?php echo htmlspecialchars($letter['username']); ?> | Chronos</title>
+    <title>Dopis od <?php echo htmlspecialchars($letter['username']); ?> | LETTER</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✉️</text></svg>">
     <style>
         :root { 

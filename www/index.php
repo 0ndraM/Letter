@@ -29,7 +29,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chronos | Zanechte stopu</title>
+    <title>LETTER | Zanechte stopu</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✉️</text></svg>">
     <style>
         :root { 
@@ -101,7 +101,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
     </div>
 
     <main class="letter-container">
-        <div class="author-header">PROJEKT_CHRONOS</div>
+        <div class="author-header">PROJEKT_LETTER</div>
         
         <?php if ($isLoggedIn): ?>
     <h1>Vítejte zpět, <?php echo htmlspecialchars($_SESSION['username'] ?? 'poutníku'); ?>.</h1>
