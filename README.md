@@ -6,12 +6,13 @@ Webová aplikace pro psaní a sdílení dopisů. Zaregistrujte se, napište dopi
 
 ## Funkce
 
-- **Registrace a přihlášení** – vytvoření anonymního účtu chráněného heslem
+- **Registrace a přihlášení** – vytvoření anonymního účtu chráněného heslem (jméno: min. 3 znaky, heslo: min. 6 znaků)
 - **Rich-text editor** – formátování textu (tučné, kurzíva, podtržení, zarovnání, seznamy) pomocí [Quill.js](https://quilljs.com/)
-- **Publikování dopisu** – každý uložený dopis získá unikátní náhodný token (např. `4f2a9b1c5e`)
+- **Publikování dopisu** – každý uložený dopis získá unikátní 10-místný náhodný token (např. `4f2a9b1c5e`)
 - **Sdílení** – jednoduchý odkaz ve tvaru `view.php?id=<token>` lze poslat komukoli
 - **Archiv** – přehled všech vlastních dopisů s náhledem a datumem vytvoření
 - **Úpravy** – autor dopisu ho může kdykoliv upravit
+- **Tmavý režim** – automatické přizpůsobení systémovému nastavení (prefers-color-scheme)
 
 ---
 
@@ -48,11 +49,11 @@ Webová aplikace pro psaní a sdílení dopisů. Zaregistrujte se, napište dopi
 
 3. **Importujte databázové schéma:**
 
-   Otevřete [phpMyAdmin](http://localhost:8081), přihlaste se (uživatel: `user`, heslo: `user_password`, databáze: `wwww`) a importujte soubor `db.sql`.
+   Otevřete [phpMyAdmin](http://localhost:8081), přihlaste se (uživatel: `root`, heslo: `root_password`, databáze: `wwww`) a importujte soubor `db.sql`.
 
    Nebo přes příkazový řádek:
    ```bash
-   docker exec -i projekt_db mysql -u user -puser_password wwww < db.sql
+   docker exec -i projekt_db mysql -u root -proot_password wwww < db.sql
    ```
 
 4. **Otevřete aplikaci:**
@@ -68,13 +69,14 @@ Webová aplikace pro psaní a sdílení dopisů. Zaregistrujte se, napište dopi
 Letter/
 ├── docker-compose.yml   # Konfigurace Docker služeb
 ├── db.sql               # SQL schéma databáze
+├── db_data/             # Persistentní data MySQL (generováno Dockerem)
 └── www/                 # Zdrojové soubory aplikace
     ├── db.php           # Připojení k databázi (PDO)
-    ├── index.php        # Hlavní stránka + přihlášení
+    ├── index.php        # Hlavní stránka + přihlášení + archiv
     ├── register.php     # Registrace nového uživatele
     ├── write.php        # Editor pro nový dopis
-    ├── save.php         # Uložení dopisu do DB
-    ├── view.php         # Zobrazení dopisu
+    ├── save.php         # Uložení dopisu do DB + generování tokenu
+    ├── view.php         # Zobrazení dopisu + kopírování odkazu
     ├── edit.php         # Úprava existujícího dopisu
     └── logout.php       # Odhlášení
 ```
@@ -94,7 +96,7 @@ CREATE TABLE users (
 
 -- Dopisy
 CREATE TABLE content_table (
-  id          VARCHAR(12) NOT NULL PRIMARY KEY,  -- náhodný token
+  id          VARCHAR(12) NOT NULL PRIMARY KEY,  -- 10-místný náhodný hex token
   user_id     INT(11) NOT NULL,
   letter_text LONGTEXT NOT NULL,
   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
