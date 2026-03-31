@@ -58,13 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['letter_content'])) {
             <div class="actions">
                 <button type="submit" class="btn btn-save">Uložit změny</button>
                 <a href="view.php?id=<?php echo $id; ?>" class="btn btn-cancel">Zrušit</a>
+                <button type="button" class="btn btn-cancel" onclick="if(confirm('Opravdu chcete smazat tento dopis? Tuto akci nelze vrátit.')) window.location.href='delete.php?id=<?php echo $id; ?>'" style="background: #fee2e2; color: #991b1b; border-color: #fecaca; margin-left: 10px;">🗑️ Smazat</button>
             </div>
         </form>
     </main>
 
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
-        var quill = new Quill('#editor', { theme: 'snow', modules: { toolbar: [['bold', 'italic', 'underline'], [{ 'align': [] }], [{ 'list': 'ordered'}, { 'list': 'bullet' }]] } });
+        var quill = new Quill('#editor', { theme: 'snow', } );
         document.getElementById('editForm').onsubmit = function() {
             document.getElementById('letter_content').value = quill.root.innerHTML;
         };

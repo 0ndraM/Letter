@@ -21,8 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['letter_content'])) {
         $randomId = substr(md5(uniqid(mt_rand(), true)), 0, 10);
     }
 
-    // 4. Uložení do databáze
-    $stmt = $pdo->prepare("INSERT INTO content_table (id, user_id, letter_text) VALUES (?, ?, ?)");
+    // 4. Uložení do databáze s explicitním časem
+    $stmt = $pdo->prepare("INSERT INTO content_table (id, user_id, letter_text, created_at) VALUES (?, ?, ?, NOW())");
     
     if ($stmt->execute([$randomId, $userId, $content])) {
         // 5. Přesměrování na nově vytvořený dopis

@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_action'])) {
 }
 
 $isLoggedIn = isset($_SESSION['user_id']);
+$deleted = isset($_GET['deleted']) && $_GET['deleted'] == 1;
 ?>
 
 <!DOCTYPE html>
@@ -53,6 +54,10 @@ $isLoggedIn = isset($_SESSION['user_id']);
         .btn-primary { background: var(--accent); color: white; }
         .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
         .btn-outline { background: rgba(0,0,0,0.05); color: #6b7280; border: 1px solid #d1d5db; }
+        
+        /* Notifikace */
+        .notification { padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; }
+        .notification-success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
         
         /* Modal */
         .modal { display: <?php echo ($error ? 'flex' : 'none'); ?>; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; backdrop-filter: blur(4px); }
@@ -102,6 +107,10 @@ $isLoggedIn = isset($_SESSION['user_id']);
 
     <main class="letter-container">
         <div class="author-header">PROJEKT_LETTER</div>
+        
+        <?php if ($deleted): ?>
+            <div class="notification notification-success">✓ Dopis byl úspěšně smazán.</div>
+        <?php endif; ?>
         
         <?php if ($isLoggedIn): ?>
     <h1>Vítejte zpět, <?php echo htmlspecialchars($_SESSION['username'] ?? 'poutníku'); ?>.</h1>

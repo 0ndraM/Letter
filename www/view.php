@@ -114,10 +114,11 @@ $isOwner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $letter['user
     </main>
 
     <div class="actions">
+        <?php if ($isOwner): ?>
         <button class="btn btn-outline" onclick="copyLink()">📋 Kopírovat odkaz pro sdílení</button>
         
-        <?php if ($isOwner): ?>
-            <a href="edit.php?id=<?php echo $id; ?>" class="btn btn-edit">✏️ Upravit můj dopis</a>
+        <a href="edit.php?id=<?php echo $id; ?>" class="btn btn-edit">✏️ Upravit můj dopis</a>
+        <button class="btn btn-outline" onclick="if(confirm('Opravdu chcete smazat tento dopis? Tuto akci nelze vrátit.')) window.location.href='delete.php?id=<?php echo $id; ?>'" style="background: #fee2e2; color: #991b1b; border-color: #fecaca;">🗑️ Smazat dopis</button>
         <?php endif; ?>
         
         <div style="margin-top: 20px;">
