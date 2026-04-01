@@ -15,7 +15,74 @@ $stmt->execute([$id]);
 $letter = $stmt->fetch();
 
 if (!$letter) {
-    die("Dopis s tímto kódem neexistuje. Možná byl smazán nebo máte špatný odkaz.");
+    http_response_code(404);
+    ?>
+    <!DOCTYPE html>
+    <html lang="cs">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dopis nenalezen | LETTER</title>
+        <link rel="stylesheet" href="style.css">
+        <style>
+            body {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 16px;
+                box-sizing: border-box;
+            }
+
+            .error-card {
+                max-width: 760px;
+                width: 100%;
+                background: var(--paper-color);
+                border-radius: 4px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+                padding: 40px 28px;
+                color: var(--text-color);
+                text-align: center;
+                line-height: 1.8;
+            }
+
+            .error-code {
+                color: var(--danger);
+                font-size: 0.8rem;
+                letter-spacing: 1px;
+                margin-bottom: 18px;
+            }
+
+            .error-title {
+                font-size: 1rem;
+                margin: 0 0 20px;
+            }
+
+            .error-text {
+                font-size: 0.72rem;
+                margin: 0;
+            }
+
+            .back-link {
+                display: inline-block;
+                margin-top: 26px;
+                text-decoration: none;
+                color: #6b7280;
+                font-size: 0.68rem;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="error-card">
+            <div class="error-code">CHYBA 404</div>
+            <h1 class="error-title">Dopis nenalezen</h1>
+            <p class="error-text">Dopis s tímto kódem neexistuje. Možná byl smazán nebo máte špatný odkaz.</p>
+            <a class="back-link" href="index.php">← Zpět na hlavní stranu</a>
+        </main>
+    </body>
+    </html>
+    <?php
+    exit;
 }
 
 // 3. Kontrola, zda je aktuální návštěvník autorem dopisu
@@ -29,48 +96,16 @@ $isOwner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $letter['user
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dopis od <?php echo htmlspecialchars($letter['username']); ?> | LETTER</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✉️</text></svg>">
+    <link rel="stylesheet" href="style.css">
     <style>
-        :root { 
-            --bg-color: #f3f4f6; 
-            --paper-color: #fdfaf0;
-            --text-color: #1f2937;
-            --accent: #4f46e5;
-        }
-        
-        @media (prefers-color-scheme: dark) { :root { --bg-color: #000000; } }
-
-        body { 
-            font-family: 'Menlo', 'Monaco', 'Courier New', monospace; 
-            background: var(--bg-color); 
-            margin: 0; padding: 0; 
-            display: flex; flex-direction: column; min-height: 100vh;
-        }
-
         .letter-container { 
-            max-width: 800px; 
-            width: calc(100% - 16px); 
-            margin: 8px auto 20px auto; 
-            background: var(--paper-color); 
-            padding: 50px 40px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15); 
             min-height: 500px; 
-            color: var(--text-color); 
             line-height: 1.6;
-            box-sizing: border-box;
-            border-radius: 4px;
-        }
-
-        @media (max-width: 600px) {
-            .letter-container { padding: 30px 20px; }
+            padding: 50px 40px;
         }
 
         .author-header { 
-            font-size: 0.75rem; 
-            color: #9ca3af; 
-            border-bottom: 1px solid rgba(0,0,0,0.05); 
-            padding-bottom: 10px; 
-            margin-bottom: 30px; 
-            letter-spacing: 2px;
+            margin-bottom: 30px;
         }
 
         .timestamp-footer { 
@@ -83,11 +118,7 @@ $isOwner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $letter['user
             text-transform: uppercase;
         }
 
-        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 500; transition: 0.2s; text-decoration: none; display: inline-block; }
-        .btn-outline { background: rgba(0,0,0,0.05); color: #6b7280; border: 1px solid #d1d5db; }
         .btn-edit { background: var(--accent); color: white; }
-
-        .actions { text-align: center; margin-top: 30px; margin-bottom: 40px; }
 
         /* Styly pro formátovaný obsah z editoru */
         .letter-content { font-size: 16px; overflow-wrap: break-word; }
@@ -96,7 +127,6 @@ $isOwner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $letter['user
         .ql-align-right { text-align: right; }
         .ql-align-justify { text-align: justify; }
 
-        footer { margin-top: auto; padding: 30px 20px; text-align: center; color: #9ca3af; font-size: 11px; }
     </style>
 </head>
 <body>
@@ -118,11 +148,11 @@ $isOwner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $letter['user
         <button class="btn btn-outline" onclick="copyLink()">📋 Kopírovat odkaz pro sdílení</button>
         
         <a href="edit.php?id=<?php echo $id; ?>" class="btn btn-edit">✏️ Upravit můj dopis</a>
-        <button class="btn btn-outline" onclick="if(confirm('Opravdu chcete smazat tento dopis? Tuto akci nelze vrátit.')) window.location.href='delete.php?id=<?php echo $id; ?>'" style="background: #fee2e2; color: #991b1b; border-color: #fecaca;">🗑️ Smazat dopis</button>
+        <button class="btn btn-outline btn-danger" onclick="if(confirm('Opravdu chcete smazat tento dopis? Tuto akci nelze vrátit.')) window.location.href='delete.php?id=<?php echo $id; ?>'">🗑️ Smazat dopis</button>
         <?php endif; ?>
         
-        <div style="margin-top: 20px;">
-            <a href="index.php" style="color: #9ca3af; text-decoration: none; font-size: 12px;">← Zpět na hlavní stranu</a>
+        <div class="mt-20">
+            <a href="index.php" class="text-muted no-decoration fs-12">← Zpět na hlavní stranu</a>
         </div>
     </div>
 

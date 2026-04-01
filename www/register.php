@@ -41,20 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrace | LETTER</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✉️</text></svg>">
+    <link rel="stylesheet" href="style.css">
     <style>
-        :root { 
-            --bg-color: #f3f4f6; 
-            --paper-color: #fdfaf0;
-            --text-color: #1f2937;
-            --accent: #4f46e5;
-        }
-        
-        @media (prefers-color-scheme: dark) { :root { --bg-color: #000000; } }
-
         body { 
-            font-family: 'Menlo', 'Monaco', 'Courier New', monospace; 
-            background: var(--bg-color); 
-            margin: 0; padding: 0; 
             display: flex; align-items: center; justify-content: center; min-height: 100vh;
         }
 
@@ -69,15 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--text-color);
         }
 
-        .author-header { 
-            font-size: 0.75rem; 
-            color: #9ca3af; 
-            border-bottom: 1px solid rgba(0,0,0,0.05); 
-            padding-bottom: 10px; 
-            margin-bottom: 30px; 
-            letter-spacing: 2px;
-            text-align: center;
-        }
+        .author-header { text-align: center; }
 
         h2 { text-align: center; margin-bottom: 30px; font-size: 1.5rem; }
 
@@ -90,14 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1); }
 
-        .btn { 
-            width: 100%; padding: 12px; margin-top: 20px;
-            background: var(--accent); color: white; border: none; 
-            border-radius: 6px; cursor: pointer; font-family: inherit; 
-            font-size: 14px; font-weight: 500; transition: 0.2s;
-        }
-
-        .btn:hover { background: #4338ca; }
+        .btn { width: 100%; margin-top: 20px; }
 
         .msg { font-size: 12px; text-align: center; margin-bottom: 15px; }
         .error { color: #ef4444; }
@@ -121,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($success): ?>
             <div class="msg success">
                 <?php echo $success; ?><br>
-                <a href="index.php" style="color: inherit; font-weight: bold;">Přejít k přihlášení</a>
+                <a href="index.php" class="bold text-inherit">Přejít k přihlášení</a>
             </div>
         <?php else: ?>
             <form method="POST">
