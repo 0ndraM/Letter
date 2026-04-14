@@ -30,8 +30,14 @@ $deleted = isset($_GET['deleted']) && $_GET['deleted'] == 1;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>LETTER | Zanechte stopu</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✉️</text></svg>">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link rel="stylesheet" href="style.css">
     <style>
         /* Notifikace */
@@ -134,6 +140,7 @@ $deleted = isset($_GET['deleted']) && $_GET['deleted'] == 1;
 
             <div class="mt-20">
                 <button class="btn btn-primary" onclick="toggleModal(true)">Začít psát</button>
+                <button id="installAppBtn" class="btn btn-outline" style="display: none; margin-top: 10px;">Nainstalovat aplikaci</button>
                 <p class="fs-11 text-muted mt-15">Pro přístup k archivu a psaní je nutné se přihlásit.</p>
             </div>
         <?php endif; ?>
@@ -152,5 +159,6 @@ $deleted = isset($_GET['deleted']) && $_GET['deleted'] == 1;
             if (event.target == modal) modal.style.display = "none";
         }
     </script>
+    <script src="pwa-register.js"></script>
 </body>
 </html>

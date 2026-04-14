@@ -22,7 +22,13 @@ if (!$letter) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#0f172a">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <title>Dopis nenalezen | LETTER</title>
+        <link rel="manifest" href="manifest.webmanifest">
+        <link rel="apple-touch-icon" href="icons/icon-192.png">
         <link rel="stylesheet" href="style.css">
         <style>
             body {
@@ -79,6 +85,7 @@ if (!$letter) {
             <p class="error-text">Dopis s tímto kódem neexistuje. Možná byl smazán nebo máte špatný odkaz.</p>
             <a class="back-link" href="index.php">← Zpět na hlavní stranu</a>
         </main>
+        <script src="pwa-register.js"></script>
     </body>
     </html>
     <?php
@@ -94,8 +101,14 @@ $isOwner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $letter['user
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Dopis od <?php echo htmlspecialchars($letter['username']); ?> | LETTER</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✉️</text></svg>">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link rel="stylesheet" href="style.css">
     <style>
         .letter-container { 
@@ -205,5 +218,6 @@ function fallbackCopy(text) {
     document.body.removeChild(textArea);
 }
     </script>
+    <script src="pwa-register.js"></script>
 </body>
 </html>

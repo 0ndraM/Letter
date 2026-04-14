@@ -34,7 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['letter_content'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Upravit dopis | LETTER</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link rel="stylesheet" href="style.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
@@ -66,5 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['letter_content'])) {
             document.getElementById('letter_content').value = quill.root.innerHTML;
         };
     </script>
+    <script src="pwa-register.js"></script>
 </body>
 </html>

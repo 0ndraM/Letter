@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <title>Offline | LETTER</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .offline-card {
+      max-width: 560px;
+      background: var(--paper-color);
+      color: var(--text-color);
+      padding: 36px 28px;
+      border-radius: 6px;
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.22);
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .offline-title {
+      margin: 0 0 14px;
+      font-size: 1.1rem;
+      letter-spacing: 0.6px;
+    }
+
+    .offline-text {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .offline-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="offline-card">
+    <h1 class="offline-title">Jste offline</h1>
+    <p class="offline-text">Aplikace neni aktualne pripojena k internetu. Jakmile se pripojeni obnovi, zkuste stranku nacist znovu.</p>
+    <a class="offline-link" href="index.php">Zpet na uvod</a>
+  </main>
+</body>
+</html>
