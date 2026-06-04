@@ -59,7 +59,10 @@ Webová aplikace pro psaní a sdílení dopisů. Zaregistrujte se, napište dopi
 4. **Otevřete aplikaci:**
 
    - Aplikace: [http://localhost:8080](http://localhost:8080)
+   - Aplikace (HTTPS pro PWA instalaci): [https://localhost:8443](https://localhost:8443)
    - phpMyAdmin: [http://localhost:8081](http://localhost:8081)
+
+> Poznámka: HTTPS certifikát v Dockeru je self-signed, prohlížeč proto při prvním otevření zobrazí bezpečnostní upozornění.
 
 ---
 
