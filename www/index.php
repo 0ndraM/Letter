@@ -39,7 +39,7 @@ $deleted = isset($_GET['deleted']) && $_GET['deleted'] == 1;
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link rel="stylesheet" href="style.css">
-    <style>
+   <style>
         /* Notifikace */
         .notification { padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; }
         .notification-success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
@@ -93,8 +93,13 @@ $deleted = isset($_GET['deleted']) && $_GET['deleted'] == 1;
         <h3 class="archive-title">MOJE ARCHIVY</h3>
         
         <?php
-        // Načteme dopisy přihlášeného uživatele
-        $stmt = $pdo->prepare("SELECT id, letter_text, created_at FROM content_table WHERE user_id = ? ORDER BY created_at DESC");
+        // Načteme dopisy přihlášeného uživatele včetně statistik zobrazení
+        $stmt = $pdo->prepare("SELECT c.id, c.letter_text, c.created_at, COUNT(v.id) as total_views, COUNT(DISTINCT v.ip_address) as unique_views 
+                               FROM content_table c 
+                               LEFT JOIN view_logs v ON c.id = v.letter_id 
+                               WHERE c.user_id = ? 
+                               GROUP BY c.id 
+                               ORDER BY c.created_at DESC");
         $stmt->execute([$_SESSION['user_id']]);
         $myLetters = $stmt->fetchAll();
 
@@ -113,7 +118,7 @@ $deleted = isset($_GET['deleted']) && $_GET['deleted'] == 1;
                             </a>
                             <div class="fs-10 text-muted">
                                 <?php echo date("d. m. Y H:i", strtotime($myLetter['created_at'])); ?>
-                            </div>
+                                                            </div>
                         </div>
                         <a href="view.php?id=<?php echo $myLetter['id']; ?>" class="fs-12 text-accent no-decoration">Otevřít →</a>
                     </li>

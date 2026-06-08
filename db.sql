@@ -17,3 +17,13 @@ CREATE TABLE IF NOT EXISTS `content_table` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_author` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 3. Tabulka pro logování zobrazení sdílených zpráv
+CREATE TABLE IF NOT EXISTS `view_logs` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `letter_id` VARCHAR(12) NOT NULL,
+  `ip_address` VARCHAR(45) NOT NULL,
+  `user_agent` TEXT NOT NULL,
+  `viewed_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_view_letter` FOREIGN KEY (`letter_id`) REFERENCES `content_table`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

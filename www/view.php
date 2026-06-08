@@ -94,6 +94,104 @@ if (!$letter) {
 
 // 3. Kontrola, zda je aktuální návštěvník autorem dopisu
 $isOwner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $letter['user_id']);
+
+// Logování zobrazení (pouze pokud se nedívá sám autor)
+if (!$isOwner) {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
+    }
+    $ip = trim($ip);
+    $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
+
+    // Zamezení spamu: logujeme pouze pokud za posledních 5 minut z této IP nebyl zaznamenán přístup k tomuto dopisu
+    $checkStmt = $pdo->prepare("SELECT id FROM view_logs WHERE letter_id = ? AND ip_address = ? AND viewed_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
+    $checkStmt->execute([$id, $ip]);
+    if (!$checkStmt->fetch()) {
+        $logStmt = $pdo->prepare("INSERT INTO view_logs (letter_id, ip_address, user_agent) VALUES (?, ?, ?)");
+        $logStmt->execute([$id, $ip, $userAgent]);
+    }
+}
+
+// Pokud je uživatel vlastník, načteme statistiky
+$totalViews = 0;
+$uniqueViews = 0;
+$viewLogs = [];
+if ($isOwner) {
+    // Celkový počet zobrazení
+    $totalViewsStmt = $pdo->prepare("SELECT COUNT(*) FROM view_logs WHERE letter_id = ?");
+    $totalViewsStmt->execute([$id]);
+    $totalViews = $totalViewsStmt->fetchColumn();
+
+    // Počet unikátních zobrazení
+    $uniqueViewsStmt = $pdo->prepare("SELECT COUNT(DISTINCT ip_address) FROM view_logs WHERE letter_id = ?");
+    $uniqueViewsStmt->execute([$id]);
+    $uniqueViews = $uniqueViewsStmt->fetchColumn();
+
+    // Posledních 20 zobrazení
+    $logsStmt = $pdo->prepare("SELECT ip_address, user_agent, viewed_at FROM view_logs WHERE letter_id = ? ORDER BY viewed_at DESC LIMIT 20");
+    $logsStmt->execute([$id]);
+    $viewLogs = $logsStmt->fetchAll();
+}
+
+// Pomocná funkce pro parsování User-Agenta na čitelnější zařízení/prohlížeč
+function parseUserAgent($ua) {
+    if (empty($ua) || $ua === 'Unknown') return 'Neznámé zařízení';
+    
+    $browser = 'Neznámý prohlížeč';
+    $platform = 'Neznámý OS';
+    
+    // OS
+    if (preg_match('/android/i', $ua)) {
+        $platform = 'Android';
+    } elseif (preg_match('/iphone|ipad|ipod/i', $ua)) {
+        $platform = 'iOS';
+    } elseif (preg_match('/win/i', $ua)) {
+        $platform = 'Windows';
+    } elseif (preg_match('/mac/i', $ua)) {
+        $platform = 'macOS';
+    } elseif (preg_match('/linux/i', $ua)) {
+        $platform = 'Linux';
+    }
+    
+    // Prohlížeč
+    if (preg_match('/edge|edg/i', $ua)) {
+        $browser = 'Edge';
+    } elseif (preg_match('/chrome/i', $ua)) {
+        $browser = 'Chrome';
+    } elseif (preg_match('/firefox/i', $ua)) {
+        $browser = 'Firefox';
+    } elseif (preg_match('/safari/i', $ua)) {
+        $browser = 'Safari';
+    } elseif (preg_match('/msie|trident/i', $ua)) {
+        $browser = 'IE';
+    } elseif (preg_match('/opera|opr/i', $ua)) {
+        $browser = 'Opera';
+    }
+    
+    return "$browser ($platform)";
+}
+
+// Pomocná funkce pro čitelné datum/čas
+function timeAgo($datetime) {
+    $time = strtotime($datetime);
+    $now = time();
+    $diff = $now - $time;
+    
+    if ($diff < 60) {
+        return 'Před chvílí';
+    } elseif ($diff < 3600) {
+        $min = round($diff / 60);
+        return "Před " . $min . " " . ($min == 1 ? 'minutou' : ($min < 5 ? 'minutami' : 'minutami'));
+    } elseif ($diff < 86400) {
+        $hod = round($diff / 3600);
+        return "Před " . $hod . " " . ($hod == 1 ? 'hodinou' : ($hod < 5 ? 'hodinami' : 'hodinami'));
+    } else {
+        return date("d. m. Y H:i", $time);
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -110,7 +208,7 @@ $isOwner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $letter['user
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link rel="stylesheet" href="style.css">
-    <style>
+ <style>
         .letter-container { 
             min-height: 500px; 
             line-height: 1.6;
@@ -168,6 +266,72 @@ $isOwner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $letter['user
             <a href="index.php" class="text-muted no-decoration fs-12">← Zpět na hlavní stranu</a>
         </div>
     </div>
+
+    <?php if ($isOwner): ?>
+    <section class="letter-container mt-40" style="margin-bottom: 40px;">
+        <h3 class="archive-title">📊 STATISTIKA A HISTORIE ZOBRAZENÍ</h3>
+        
+        <div class="stats-grid">
+            <div class="stats-card">
+                <div class="stats-val"><?php echo $totalViews; ?></div>
+                <div class="stats-lbl">Celkem zobrazení</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-val"><?php echo $uniqueViews; ?></div>
+                <div class="stats-lbl">Unikátní návštěvy</div>
+            </div>
+        </div>
+
+        <h4 class="fs-12 text-muted mt-30 mb-10" style="font-family: var(--font-mono); letter-spacing: 1px;">POSLEDNÍ AKTIVITA</h4>
+        <?php if ($viewLogs): ?>
+            <div class="log-table-wrap">
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>Datum a čas</th>
+                            <th>IP adresa</th>
+                            <th>Zařízení a prohlížeč</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($viewLogs as $log): 
+                            // Částečně anonymizovaná IP adresa pro ochranu soukromí
+                            $ipParts = explode('.', $log['ip_address']);
+                            if (count($ipParts) === 4) {
+                                $displayIp = $ipParts[0] . '.' . $ipParts[1] . '.*.*';
+                            } else {
+                                // IPv6 nebo lokální adresa
+                                if ($log['ip_address'] === '::1' || $log['ip_address'] === '127.0.0.1') {
+                                    $displayIp = $log['ip_address'];
+                                } else {
+                                    $displayIp = substr($log['ip_address'], 0, 19) . '::****';
+                                }
+                            }
+                        ?>
+                            <tr>
+                                <td>
+                                    <div class="badge-date" title="<?php echo date("d. m. Y H:i:s", strtotime($log['viewed_at'])); ?>">
+                                        <?php echo timeAgo($log['viewed_at']); ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge badge-ip"><?php echo htmlspecialchars($displayIp); ?></span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-device" title="<?php echo htmlspecialchars($log['user_agent']); ?>">
+                                        <?php echo htmlspecialchars(parseUserAgent($log['user_agent'])); ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <p class="fs-13 text-muted italic text-center mt-20" style="padding: 20px 0;">Zatím žádná zobrazení od jiných uživatelů.</p>
+        <?php endif; ?>
+    </section>
+    <?php endif; ?>
 
     <footer>
         <p>&copy; <?php echo date("Y"); ?> <a href="https://0ndra.maweb.eu" target="_blank">0ndra_M_</a></p>
